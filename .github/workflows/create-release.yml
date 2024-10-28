@@ -34,10 +34,12 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      - name: Set Skip Release Flag
+        run: echo "SKIP_RELEASE=${{ inputs.skip_release }}" >> $GITHUB_ENV
 
       - name: debug
-        run:
-          echo " inputs.skip_release ${{ inputs.skip_release }} ""
+        run: |
+          echo "Skip Release is set to: $SKIP_RELEASE"
 
       - name: Verify tag is semver
         run: |
@@ -123,7 +125,7 @@ jobs:
         id: changelog
  
       - name: Create Release
-        if: ${{ inputs.skip_release == false }}
+        if: env.SKIP_RELEASE == 'false'
         uses: ncipollo/release-action@main
         with:
           owner: ${{ steps.changelog.outputs.owner }}
