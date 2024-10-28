@@ -34,6 +34,11 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+
+      - name: debug
+        run:
+          echo " inputs.skip_release ${{ inputs.skip_release }} ""
+
       - name: Verify tag is semver
         run: |
           set -x
@@ -116,7 +121,7 @@ jobs:
             -f target_commitish="${{ inputs.ref }}" \
             -f previous_tag_name="${PREV_TAG}" | jq -r '.body' | grep -Pzo '.*Contributors(.*\n)*' >> "${RELEASE_DOC}"
         id: changelog
-
+ 
       - name: Create Release
         if: ${{ inputs.skip_release == false }}
         uses: ncipollo/release-action@main
