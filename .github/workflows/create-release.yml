@@ -123,7 +123,7 @@ jobs:
             -f target_commitish="${{ inputs.ref }}" \
             -f previous_tag_name="${PREV_TAG}" | jq -r '.body' | grep -Pzo '.*Contributors(.*\n)*' >> "${RELEASE_DOC}"
         id: changelog
- 
+
       - name: Create Release
         if: env.SKIP_RELEASE == 'false'
         uses: ncipollo/release-action@main
