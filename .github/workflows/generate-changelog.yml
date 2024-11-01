@@ -68,8 +68,6 @@ jobs:
           filterfunc() { echo "${NOTES}" | grep "^*\s*:$1:" | sed "s/.*:$1:\s*/* /"; }
 
           RELEASE_DOC="${PWD}/release.md"
-          echo "release_doc=${RELEASE_DOC}" >> $GITHUB_ENV
-
           echo "**Full Changelog**: https://github.com/${REPOSITORY}/commits/${{ inputs.version }}" > "${RELEASE_DOC}"
 
           BREAKING_CHANGES="$(filterfunc warning)"
@@ -77,9 +75,6 @@ jobs:
             echo "## :warning: Breaking Changes" >> ${RELEASE_DOC}
             echo "${BREAKING_CHANGES}" >> ${RELEASE_DOC}
             echo "" >> ${RELEASE_DOC}
-            echo "breaking-changes<<EOF" >> $GITHUB_OUTPUT
-            echo "${BREAKING_CHANGES}" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
           fi
 
           FEATURE_CHANGES="$(filterfunc sparkles)"
@@ -87,9 +82,6 @@ jobs:
             echo "## :sparkles: Features" >> ${RELEASE_DOC}
             echo "${FEATURE_CHANGES}" >> ${RELEASE_DOC}
             echo "" >> ${RELEASE_DOC}
-            echo "features<<EOF" >> $GITHUB_OUTPUT
-            echo "${FEATURE_CHANGES}" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
           fi
 
           BUG_FIXES="$(filterfunc bug)"
@@ -97,19 +89,17 @@ jobs:
             echo "## :bug: Bug Fixes" >> ${RELEASE_DOC}
             echo "${BUG_FIXES}" >> ${RELEASE_DOC}
             echo "" >> ${RELEASE_DOC}
-            echo "bug-fixes<<EOF" >> $GITHUB_OUTPUT
-            echo "${BUG_FIXES}" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
           fi
 
           NEW_CONTRIB=$(echo "${NOTES}" | sed -n "/Contributors/,\$p")
           if [ -n "${NEW_CONTRIB}" ]; then
             echo "${NEW_CONTRIB}" >> ${RELEASE_DOC}
-            echo "new-contributors<<EOF" >> $GITHUB_OUTPUT
-            echo "${NEW_CONTRIB}" | head -n -3 >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
           else
             echo "${NOTES}" | sed -n "/Changelog/,\$p" >> ${RELEASE_DOC}
           fi
 
-          echo "changelog-file=${RELEASE_DOC}" >> $GITHUB_OUTPUT
+      - name: Upload Changelog Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: changelog-artifact
+          path: release.md
