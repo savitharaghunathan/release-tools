@@ -1,4 +1,3 @@
-
 name: Generate Changelog
 
 on:
@@ -23,10 +22,10 @@ on:
         required: false
         default: ${{ github.ref }}
         type: string
-      github_token:
+    secrets:
+      token:
         description: 'GitHub token'
         required: true
-        type: string
 
 jobs:
   changelog:
